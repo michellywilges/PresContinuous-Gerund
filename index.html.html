@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quiz — Present Continuous & Gerund</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --accent: #6c63ff;
+    --accent2: #00d4a0;
+    --danger: #ff5c6a;
+    --text: #f0f0f5;
+    --muted: #7a7a96;
+    --correct: #00d4a0;
+    --wrong: #ff5c6a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .container { width: 100%; max-width: 420px; }
+
+  /* START SCREEN */
+  .start-screen { text-align: center; padding: 2rem 0; }
+  .logo { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 2rem; }
+  .title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+  .title span { color: var(--accent2); }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 2rem; line-height: 1.6; }
+  .phases-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
+  .phase-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; text-align: left; }
+  .phase-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent); min-width: 28px; }
+  .phase-name { font-size: 13px; font-weight: 500; }
+  .phase-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .lives-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 1.5rem; }
+  .heart { font-size: 22px; }
+  .btn-start {
+    width: 100%; padding: 16px; border-radius: 12px; border: none;
+    background: var(--accent); color: #fff;
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.05em; transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-start:hover { opacity: 0.9; }
+  .btn-start:active { transform: scale(0.98); }
+
+  /* HUD */
+  .hud { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .hud-lives { display: flex; gap: 4px; }
+  .hud-heart { font-size: 18px; transition: opacity 0.3s; }
+  .hud-heart.lost { opacity: 0.2; }
+  .hud-score { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent2); }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .progress-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 4px; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* PHASE BADGE */
+  .phase-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; margin-bottom: 12px; }
+  .badge-1 { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid rgba(108,99,255,0.3); }
+  .badge-2 { background: rgba(0,212,160,0.12); color: var(--accent2); border: 1px solid rgba(0,212,160,0.3); }
+  .badge-3 { background: rgba(255,92,106,0.12); color: var(--danger); border: 1px solid rgba(255,92,106,0.3); }
+
+  /* QUESTION CARD */
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; margin-bottom: 16px; }
+  .q-num { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .q-text { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; line-height: 1.4; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .opt {
+    width: 100%; padding: 13px 16px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(108,99,255,0.08); }
+  .opt.correct { background: rgba(0,212,160,0.12); border-color: var(--correct); color: var(--correct); }
+  .opt.wrong { background: rgba(255,92,106,0.12); border-color: var(--wrong); color: var(--wrong); }
+  .opt.reveal { background: rgba(0,212,160,0.08); border-color: var(--correct); color: var(--correct); }
+  .opt:disabled { cursor: default; }
+
+  /* FEEDBACK */
+  .feedback { border-radius: 10px; padding: 10px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+  .feedback.ok { background: rgba(0,212,160,0.1); color: var(--correct); border: 1px solid rgba(0,212,160,0.2); }
+  .feedback.err { background: rgba(255,92,106,0.1); color: var(--wrong); border: 1px solid rgba(255,92,106,0.2); }
+
+  /* NEXT BTN */
+  .btn-next {
+    width: 100%; padding: 13px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-next:hover { background: var(--surface2); }
+
+  /* TRANSITION / END SCREENS */
+  .mid-screen { text-align: center; padding: 2.5rem 0; }
+  .mid-icon { font-size: 48px; margin-bottom: 12px; }
+  .mid-screen h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .mid-screen p { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+  .stat-box span:last-child { font-weight: 700; color: var(--text); }
+  .big-score { font-family: 'Syne', sans-serif; font-size: 56px; font-weight: 800; color: var(--accent2); margin: 12px 0; }
+  .score-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+
+  .hidden { display: none; }
+
+  @keyframes pop { 0%{transform:scale(0.92);opacity:0} 100%{transform:scale(1);opacity:1} }
+  .anim { animation: pop 0.2s ease forwards; }
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+const LIVES = 3;
+
+const phases = [
+  {
+    id: 1,
+    label: "Present Continuous",
+    badge: "badge-1",
+    questions: [
+      { q: "Look! The kids ___ in the pool.", opts: ["swim","are swimming","is swimming","swims"], ans: 1, tip: "Ação acontecendo agora → present continuous com auxiliar." },
+      { q: "She ___ her homework right now.", opts: ["is doing","doing","does","do"], ans: 0, tip: "Right now = agora → present continuous." },
+      { q: "They ___ a new school downtown.", opts: ["build","builds","are building","is building"], ans: 2, tip: "Sujeito plural (they) → are + -ing." },
+      { q: "He ___ on the phone. Don't disturb him.", opts: ["talk","talks","is talking","are talking"], ans: 2, tip: "He = singular → is + -ing." },
+      { q: "Qual frase está ERRADA?", opts: ["I am reading a book.","She is working late.","They is playing soccer.","We are having fun."], ans: 2, tip: "They → are, nunca is." },
+    ]
+  },
+  {
+    id: 2,
+    label: "Gerúndio",
+    badge: "badge-2",
+    questions: [
+      { q: "___ is my favorite activity.", opts: ["To swim","Swimming","Swim","Swims"], ans: 1, tip: "Sujeito da frase → gerúndio (verbo como substantivo)." },
+      { q: "She loves ___.", opts: ["dance","to dancing","dancing","dances"], ans: 2, tip: "Após 'love' → gerúndio como objeto." },
+      { q: "Her hobby is ___ photos.", opts: ["take","taking","takes","to taking"], ans: 1, tip: "Complemento de 'is' → gerúndio." },
+      { q: "___ every day keeps you healthy.", opts: ["Exercise","Exercising","Exercises","To exercising"], ans: 1, tip: "Sujeito → gerúndio. Funciona como substantivo." },
+      { q: "He is good at ___.", opts: ["cook","cooks","cooking","to cook"], ans: 2, tip: "Após preposição (at) → sempre gerúndio." },
+    ]
+  },
+  {
+    id: 3,
+    label: "Estado ou Ação?",
+    badge: "badge-3",
+    questions: [
+      { q: "I ___ you are right.", opts: ["am thinking","think","thinks","is thinking"], ans: 1, tip: "Opinião = estado → sem -ing." },
+      { q: "She ___ the soup to check the salt.", opts: ["tastes","taste","is tasting","are tasting"], ans: 2, tip: "Ação de provar → present continuous." },
+      { q: "He ___ a big house by the sea.", opts: ["is having","are having","have","has"], ans: 3, tip: "Posse = estado → sem -ing." },
+      { q: "They ___ dinner at the moment.", opts: ["have","has","are having","is having"], ans: 2, tip: "Realizar uma refeição = ação → -ing." },
+      { q: "This coffee ___ amazing!", opts: ["is smelling","smells","smell","are smelling"], ans: 1, tip: "Qualidade = estado → sem -ing." },
+    ]
+  }
+];
+
+let phase = 0, qi = 0, score = 0, lives = LIVES, answered = false;
+const app = document.getElementById('app');
+
+function totalQ() { return phases.reduce((a,p)=>a+p.questions.length,0); }
+function gIndex() { let i=0; for(let x=0;x<phase;x++) i+=phases[x].questions.length; return i+qi; }
+function cp() { return phases[phase]; }
+function cq() { return cp().questions[qi]; }
+function hearts(n) {
+  let h=''; for(let i=0;i<LIVES;i++) h+=`<span class="hud-heart${i>=n?' lost':''}">♥</span>`; return h;
+}
+
+function render(html) { app.innerHTML=html; app.classList.add('anim'); setTimeout(()=>app.classList.remove('anim'),200); }
+
+function showStart() {
+  render(`
+    <div class="start-screen">
+      <div class="logo">English Quiz</div>
+      <h1 class="title">Present<br><span>Continuous</span><br>& Gerund</h1>
+      <p class="subtitle">3 fases · 15 questões · Responda rápido e não perca suas vidas!</p>
+      <div class="phases-preview">
+        ${phases.map(p=>`<div class="phase-item">
+          <div class="phase-num">${p.id}</div>
+          <div><div class="phase-name">${p.label}</div><div class="phase-desc">5 questões</div></div>
+        </div>`).join('')}
+      </div>
+      <div class="lives-row">${'♥'.repeat(LIVES).split('').map(h=>`<span class="heart">${h}</span>`).join('')}</div>
+      <button class="btn-start" onclick="startGame()">Começar agora →</button>
+    </div>`);
+}
+
+function showGame() {
+  const p=cp(), q=cq(), gi=gIndex(), total=totalQ();
+  const pct=Math.round((gi/total)*100);
+  render(`
+    <div class="hud">
+      <div class="hud-lives">${hearts(lives)}</div>
+      <div class="hud-score">${score} pts</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-meta"><span>fase ${p.id}/3</span><span>${gi+1}/${total}</span></div>
+      <div class="progress-track"><div class="progress-bar" style="width:${pct}%"></div></div>
+    </div>
+    <span class="phase-badge ${p.badge}">${p.label}</span>
+    <div class="q-card">
+      <div class="q-num">questão ${gi+1}</div>
+      <div class="q-text">${q.q}</div>
+    </div>
+    <div class="options">
+      ${q.opts.map((o,i)=>`<button class="opt" onclick="choose(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="fb"></div>
+    <div id="nxt"></div>`);
+}
+
+function choose(i) {
+  if(answered) return;
+  answered=true;
+  const q=cq();
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  const nxt=document.getElementById('nxt');
+  if(i===q.ans) {
+    btns[i].classList.add('correct');
+    score+=10;
+    fb.innerHTML=`<div class="feedback ok">✓ Certo! +10 pts — ${q.tip}</div>`;
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.ans].classList.add('reveal');
+    lives--;
+    fb.innerHTML=`<div class="feedback err">✗ Errou! — ${q.tip}</div>`;
+    if(lives<=0){ setTimeout(showGameOver,900); return; }
+  }
+  nxt.innerHTML=`<button class="btn-next" onclick="next()">Próxima →</button>`;
+}
+
+function next() {
+  answered=false; qi++;
+  if(qi>=cp().questions.length) {
+    qi=0; phase++;
+    if(phase>=phases.length){ showEnd(); return; }
+    showTransition(); return;
+  }
+  showGame();
+}
+
+function showTransition() {
+  const p=cp();
+  render(`
+    <div class="mid-screen">
+      <div class="mid-icon">★</div>
+      <h2>Fase ${p.id} desbloqueada!</h2>
+      <p>${p.label}</p>
+      <div class="stat-box"><span>pontos até agora</span><span>${score}</span></div>
+      <div class="stat-box"><span>vidas restantes</span><span>${lives}</span></div>
+      <br>
+      <button class="btn-start" onclick="showGame()">Continuar →</button>
+    </div>`);
+}
+
+function showGameOver() {
+  render(`
+    <div class="mid-screen">
+      <div class="mid-icon">♥</div>
+      <h2>Sem vidas!</h2>
+      <p>Você terminou com <strong>${score} pontos</strong>.<br>Tente de novo para melhorar!</p>
+      <br>
+      <button class="btn-start" onclick="startGame()">Tentar de novo →</button>
+    </div>`);
+}
+
+function showEnd() {
+  const total=totalQ()*10;
+  const pct=Math.round((score/total)*100);
+  const msg = pct>=80 ? 'Excelente! Você dominou o conteúdo.' : pct>=60 ? 'Bom resultado! Revise o que errou.' : 'Continue praticando — você vai melhorar!';
+  render(`
+    <div class="mid-screen">
+      <div class="mid-icon">★</div>
+      <h2>Quiz completo!</h2>
+      <div class="big-score">${score}</div>
+      <div class="score-sub">de ${total} pontos possíveis (${pct}%)</div>
+      <p>${msg}</p>
+      <div class="stat-box"><span>questões certas</span><span>${score/10}/${totalQ()}</span></div>
+      <div class="stat-box"><span>vidas restantes</span><span>${lives}</span></div>
+      <br>
+      <button class="btn-start" onclick="startGame()">Jogar de novo →</button>
+    </div>`);
+}
+
+function startGame() {
+  phase=0; qi=0; score=0; lives=LIVES; answered=false;
+  showGame();
+}
+
+showStart();
+</script>
+</body>
+</html>
